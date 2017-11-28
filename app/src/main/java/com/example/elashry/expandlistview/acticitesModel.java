@@ -10,25 +10,17 @@ public class acticitesModel {
     private String name;
     private String cid;
     private String ctitle;
+    private String stage_id_fk;
 
     public acticitesModel(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public acticitesModel(String id, String name, String cid, String ctitle) {
-        this.id = id;
-        this.name = name;
+    public acticitesModel(String cid, String ctitle, String stage_id_fk) {
         this.cid = cid;
         this.ctitle = ctitle;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.stage_id_fk = stage_id_fk;
     }
 
     public String getId() {
@@ -45,5 +37,9 @@ public class acticitesModel {
 
     public String getCtitle() {
         return ctitle;
+    }
+
+    public String getStage_id_fk() {
+        return stage_id_fk;
     }
 }

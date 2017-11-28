@@ -78,6 +78,7 @@ public class KeyTags {
     public static final String stage_name="stage_name";
     public static final String class_id_pk="class_id_pk";
     public static final String class_title="class_title";
+    public static final String stage_id_fk="stage_id_fk";
 
 
 }
