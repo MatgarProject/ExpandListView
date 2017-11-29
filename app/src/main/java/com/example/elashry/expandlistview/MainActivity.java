@@ -6,8 +6,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -28,39 +26,27 @@ public class MainActivity extends Activity {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    ArrayList<String> list;
+    ArrayList<acticitesModel> list;
+    ArrayList<String> listtitle;
 
     HashMap<String, List<String>> listDataChild;
     final static String api = "http://anwaralfyaha.com/api/stages";
+    final static String capi = "http://anwaralfyaha.com/api/classes";
+
     List<acticitesModel> feedsList = new ArrayList<acticitesModel>();
     RequestQueue queue;
-    RecyclerView recyclerView;
-    AdapterAds adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       // Connector connector = new Connector();
-       /* recyclerView = (RecyclerView) findViewById(R.id.lvExp);
-        adapter = new AdapterAds(this, feedsList,this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerView.setAdapter(adapter);*/
-        //Getting Instance of Volley Request Queue
-
-       /* try {
-            ArrayList<acticitesModel> arrayList = parser.JsonProcessActive(connector.execute(api).get());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }*/
         queue = Controller.getInstance().getRequestQueue();
 
         JsonArrayRequest newsReq = new JsonArrayRequest(api, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                list=new ArrayList<>();
 
                 for (int i = 0; i < response.length(); i++) {
                     try {
@@ -68,19 +54,20 @@ public class MainActivity extends Activity {
                         JSONObject obj = response.getJSONObject(i);
                         acticitesModel feeds = new acticitesModel(obj.getString("stage_id_pk"), obj.getString("stage_name"));
 
-                        // adding movie to movies array
-                        feedsList.add(feeds);
-                        list=new ArrayList<>();
-                        list.add(obj.getString("stage_name"));
-                        Toast.makeText(MainActivity.this,list.get(i), Toast.LENGTH_SHORT).show();
-                        //   Toast.makeText(MainActivity.this, feedsList.get(2)+"", Toast.LENGTH_SHORT).show();
+                    list.add(feeds);
+
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     } finally {
                         //Notify adapter about data changes
                     }
                 }
+                if (list.size()>0){
+                    getfeed(list);
+                }
+
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -91,16 +78,18 @@ public class MainActivity extends Activity {
         });
         //Adding JsonArrayRequest to Request Queue
         queue.add(newsReq);
-        prepareListData();
+
+
+      //  prepareListData();
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         // preparing list data
 
-        listAdapter = new ExpandableListAdapter(this, list, listDataChild);
+      //  listAdapter = new ExpandableListAdapter(this, list, listDataChild);
 
         // setting list adapter
-        expListView.setAdapter(listAdapter);
+//        expListView.setAdapter(listAdapter);
 
         // Listview Group click listener
         expListView.setOnGroupClickListener(new OnGroupClickListener() {
@@ -126,7 +115,7 @@ public class MainActivity extends Activity {
 //             Toast.makeText(getApplicationContext(),stage_ids.get(4)+ stage_ids.get(5)+ stage_ids.get(6)+ stage_ids.get(0)+ stage_ids.get(1)+ stage_ids.get(2), Toast.LENGTH_SHORT).show();
 
                 Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
+                        list.get(groupPosition) + " Expanded",
                         Toast.LENGTH_SHORT).show();
 
             }
@@ -138,7 +127,7 @@ public class MainActivity extends Activity {
             @Override
             public void onGroupCollapse(int groupPosition) {
                 Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
+                        list.get(groupPosition) + " Collapsed",
                         Toast.LENGTH_SHORT).show();
 
             }
@@ -153,10 +142,10 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 Toast.makeText(
                         getApplicationContext(),
-                        listDataHeader.get(groupPosition)
+                        list.get(groupPosition)
                                 + " : "
                                 + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
+                                list.get(groupPosition)).get(
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
                 return false;
@@ -166,160 +155,63 @@ public class MainActivity extends Activity {
 
     }
 
-    /*
-     * Preparing the list data
-     */
-    /*private void prepareListData() {
-        feedsList = new ArrayList<acticitesModel>();
-        listDataChild = new HashMap<>();
-        List<String> myGroup = new ArrayList<>();
-        myGroup.add("The Shawshank Redemption");
-        myGroup.add("The Godfather");
-        myGroup.add("The Godfather: Part II");
-        myGroup.add("Pulp Fiction");
-      listDataChild.put(feedsList.get(2), myGroup);
-
-       *//* listDataHeader.add(String.valueOf(feedsList.get(0)));
-        listDataHeader.add(String.valueOf(feedsList.get(1)));
-        listDataHeader.add(String.valueOf(feedsList.get(2)));
-
-        listDataChild.put(listDataHeader.get(0), myGroup);
-        listDataChild.put(listDataHeader.get(1), myGroup);
-        listDataChild.put(listDataHeader.get(2), myGroup);*//*
-
-        //   List<String> list = null;
-        // Adding child data
-
-       *//* for (int i=0;i<feedsList.size();i++){
-//            if (!listDataHeader.contains(stage_names.get(i))){
-        listDataHeader.add(stage_names.get(i));
-            // list  = new ArrayList<String>();
-          //  }
-           *//**//* if (stage_ids.contains(i)){
-                list.add(class_title);*//**//*
-
-            List<List<String>> generalList = new ArrayList<>();
-
-            for (int x=0;x<listDataHeader.size();x++){
-                List<String> myGroup = new ArrayList<>();
-                generalList.add(myGroup);
-myGroup.add(String.valueOf(feedsList.get(x)));
-      //     for (int y=0;y<myGroup.size();y++) {
-                 //   if (stage_id.equals(y)){
-               //  myGroup.add(class_titles.get(y));
-                   // }else {
-                      ///  Toast.makeText(this, stage_id +"    " + y, Toast.LENGTH_SHORT).show();
-                     //  }
-             //  myGroup.add(class_title);
-
-           *//**//*    if (stage_ids.contains(8)){
-                   Toast.makeText(this, stage_id, Toast.LENGTH_SHORT).show();
-               myGroup.add(class_title);}else if (stage_ids.contains(3)){
-                   Toast.makeText(this, "kkk"+stage_id, Toast.LENGTH_SHORT).show();
-                   myGroup.add(class_title);
-               }else if (stage_ids.contains(4)){
-                   Toast.makeText(this, "kkk"+stage_id, Toast.LENGTH_SHORT).show();
-                   myGroup.add(class_title);
-               }else if (stage_ids.contains(5)){
-                   Toast.makeText(this, "kkk"+stage_id, Toast.LENGTH_SHORT).show();
-                   myGroup.add(class_title);
-               }else {}
-               listDataChild.put(listDataHeader.get(y), myGroup);
-
-           *//**//*
-        //   }
-              *//**//*  if (!listDataHeader.contains(stage_ids.get(i))){
-                    list.add(class_titles.get(i));
-
-                }else {
-                    List<String> mlist = new ArrayList<String>();
-                    mlist.add(class_titles.get(i));
-
-                }*//**//*
-
-              //  listDataChild.put(listDataHeader.get(x), myGroup);
-            //    listDataChild.put(listDataHeader.get(1), class_titles1);
-              //  listDataChild.put(listDataHeader.get(2), class_titles2);
-
-                //  listDataChild.put(listDataHeader.get(1), class_titles1);
-
-//                Toast.makeText(this, class_titles.get(0), Toast.LENGTH_SHORT).show();
-//                listDataChild.put(listDataHeader.get(1), list2);
-//                listDataChild.put(li stDataHeader.get(2), list3);
-//                listDataChild.put(listDataHeader.get(3), list4);
-//                listDataChild.put(listDataHeader.get(4), list5);
-//                listDataChild.put(listDataHeader.get(5), list6);
+    public acticitesModel getfeed(final ArrayList<acticitesModel> feed){
 
 
-            }*//*
-        //  }
+        JsonArrayRequest newsReqq = new JsonArrayRequest(capi, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+              listtitle=new ArrayList<>();
+                listDataChild = new HashMap<String, List<String>>();
 
-      // Header, Child data
+                for (int i = 0; i < response.length(); i++) {
+                    try {
 
-        // Adding child data
-       *//* List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+                        JSONObject obj = response.getJSONObject(i);
+                        acticitesModel feeds = new acticitesModel(obj.getString("class_id_pk"),obj.getString("stage_id_fk"), obj.getString("class_title"));
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+                        for (int x=0;x<feed.size();x++){
+                            if (feeds.getStage_id_fk().equals(feed.get(x).getId())){
+                                listtitle.add(feeds.getCtitle());
+                                listDataChild.put(feed.get(x).getName(),listtitle);
+                            }
+                        }
+//                     if (feeds.getStage_id_fk().equals(feed.getId())){
+//                         listtitle.add(feeds.getCtitle());
+//                         listDataChild.put(feed.getName(),listtitle);
+//                     }
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");*//*
+                        // }
+                        //  Toast.makeText(MainActivity.this, feedsList.get(2)+"", Toast.LENGTH_SHORT).show();
 
 
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    } finally {
+                        //Notify adapter about data changes
+                    }
+                }
+
+                if (listtitle.size()>0&&listDataChild.size()>0){
+                listAdapter = new ExpandableListAdapter(MainActivity.this, listDataChild);
+
+                expListView.setAdapter(listAdapter);
+                listAdapter.notifyDataSetChanged();
+
+            }}
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+                System.out.println(error.getMessage());
+            }
+        });
+        //Adding JsonArrayRequest to Request Queue
+        queue.add(newsReqq);
+        return null;
     }
-*/
-    private void prepareListData() {
-       // listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
 
-        // Adding child data
-//        listDataHeader.add("Top 250");
-      //  listDataHeader.add("Now Showing");
-      //  listDataHeader.add("Coming Soon..");
 
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-       // listDataChild.put(list.get(0), top250); // Header, Child data
-       // listDataChild.put(list.get(1), nowShowing);
-      //  listDataChild.put(list.get(2), comingSoon);
-    }
 }
